@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import os
+import datetime
 import urllib
 from bs4 import BeautifulSoup
 
@@ -16,10 +18,19 @@ def get_content_from_url(url):
 
 def get_article_list(html_doc):
     """ Get article list from index.html"""
+    DOMAIN_NAME = 'http://www.dailymail.co.uk'
+
+    urls = []
+
     soup = BeautifulSoup(html_doc, 'html.parser')
     links = soup.select('.linkro-darkred > a')
 
-    return links
+    for url in links:
+        if url.has_attr('href'):
+            href = DOMAIN_NAME + url['href']
+            urls.append(href)
+
+    return urls
 
 
 def get_title_and_content(html_doc):
@@ -56,20 +67,36 @@ def cut_rules(tag):
 
 if __name__ == '__main__':
 
+    # set download folder
+    ROOT_FOLDER = '/home/steven/dailymail'
+    ARTICLE_FOLDER = os.path.join(ROOT_FOLDER, datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+
+    if not os.path.exists(ROOT_FOLDER):
+        os.mkdir(ROOT_FOLDER)
+
+    if not os.path.exists(ARTICLE_FOLDER):
+        os.mkdir(ARTICLE_FOLDER)
+
     # Index url contains our article links
-    # url = 'http://www.dailymail.co.uk/ushome/index.html'
-    # response = get_content_from_url(url)
-    # content = response.read()
+    index_url = 'http://www.dailymail.co.uk/ushome/index.html'
+    response = get_content_from_url(index_url).read()
 
     # Get article links
-    # links = get_article_list(content)
+    links = get_article_list(response)
 
-    # Content url
-    content_url = 'http://www.dailymail.co.uk/news/article-3550828/He-walks-like-George-William-Harry-poke-fun-clip-father-toddler-Royals-gather-watch-never-seen-home-videos-Queen-90th-birthday-special.html'
+    # Iterate links
+    for idx, url in enumerate(links):
+        # filename
+        fname = os.path.join(ARTICLE_FOLDER, str(idx))
 
-    response = get_content_from_url(content_url).read()
+        # Get response and parse
+        response = get_content_from_url(url).read()
+        try:
+            title, content = get_title_and_content(response)
 
-    title, content = get_title_and_content(response)
+            with open(fname, 'w') as file:
+                file.write('<h1>{0}</h1>\n{1}'.format(title, content))
+                print ('Success : {0}'.format(idx))
 
-    with open('/tmp/out.html', 'w') as file:
-        file.write('<h1>{0}</h1>\n{1}'.format(title, content))
+        except Exception as e:
+            print ('Error : {0}'.format(idx))
