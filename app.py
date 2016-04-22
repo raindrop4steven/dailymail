@@ -30,35 +30,26 @@ def get_title_and_content(html_doc):
     title = soup.find(id='js-article-text').find('h1').string
 
     # Clean article body first, remove videos, share links etc.
-    body = soup.find(itemprop="articleBody")
-    body_soup = BeautifulSoup(str(body), 'html.parser')
+    body = soup.find(itemprop="articleBody").encode('ascii')
 
-    extracted_body = body_soup.find_all(need_extract)
+    body_soup = BeautifulSoup(body, 'html.parser')
 
-    return title, str(extracted_body)
+    extracted_body = body_soup.find_all(cut_rules)
+
+    return title, ''.join(x.encode('ascii') for x in extracted_body)
 
 
-def need_extract(tag):
-    """ Check if tag needed.
-    1. <div class=moduleFull>
-    2. <div class=moduleFull mol-video
-    3. <div class=mol-page-break
-    4. <div class=art-ins mol-factbox news
-    5. <div>: facebook news, don't know why no class
+def cut_rules(tag):
+    """ Get needed tag
+    1. <p>
+    2. <div class=artSplitter>
     """
+    result = False
 
-    result = True
-    # filter rules to rule out these elements
-    rules = ['moduleFull',
-             'vjs-video-container',
-             'mol-page-break',
-             'art-ins']
+    rules = ['artSplitter']
 
-    if tag.name == 'div':
-        if tag.has_attr('class') and tag['class'][0] in rules:
-            result = False
-        elif not tag.has_attr('class'):
-            result = False
+    if tag.name == 'p' or tag.name == 'div' and tag.has_attr('class') and tag['class'][0] in rules:
+        result = True
 
     return result
 
