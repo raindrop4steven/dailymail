@@ -57,9 +57,14 @@ def cut_rules(tag):
     """
     result = False
 
-    rules = ['mol-img']
+    p_rules = ['mol-para-with-font',
+               'imageCaption']
 
-    if tag.name == 'p' or tag.name == 'div' and tag.has_attr('class') and tag['class'][0] in rules:
+    div_rules = ['mol-img']
+
+    if tag.name == 'p' and tag.has_attr('class') and tag['class'][0] in p_rules:
+        result = True
+    elif tag.name == 'div' and tag.has_attr('class') and tag['class'][0] in div_rules:
         result = True
 
     return result
