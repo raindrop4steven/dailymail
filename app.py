@@ -73,7 +73,8 @@ def cut_rules(tag):
 if __name__ == '__main__':
 
     # set download folder
-    ROOT_FOLDER = '/home/steven/dailymail'
+    FOLDER_NAME = 'dailymail'
+    ROOT_FOLDER = os.path.join(os.path.expanduser('~'), FOLDER_NAME)
     ARTICLE_FOLDER = os.path.join(ROOT_FOLDER, datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
 
     if not os.path.exists(ROOT_FOLDER):
