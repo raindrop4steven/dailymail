@@ -46,7 +46,7 @@ def cut_rules(tag):
     """
     result = False
 
-    rules = ['artSplitter']
+    rules = ['mol-img']
 
     if tag.name == 'p' or tag.name == 'div' and tag.has_attr('class') and tag['class'][0] in rules:
         result = True
