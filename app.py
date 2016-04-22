@@ -93,7 +93,7 @@ if __name__ == '__main__':
     # Iterate links
     for idx, url in enumerate(links):
         # filename
-        fname = os.path.join(ARTICLE_FOLDER, str(idx))
+        fname = os.path.join(ARTICLE_FOLDER, str(idx) + '.html')
 
         # Get response and parse
         response = get_content_from_url(url).read()
