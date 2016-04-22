@@ -72,4 +72,4 @@ if __name__ == '__main__':
     title, content = get_title_and_content(response)
 
     with open('/tmp/out.html', 'w') as file:
-        file.write('{0}\n{1}'.format(title, content))
+        file.write('<h1>{0}</h1>\n{1}'.format(title, content))
