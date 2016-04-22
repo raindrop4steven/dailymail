@@ -38,7 +38,7 @@ def get_title_and_content(html_doc):
     soup = BeautifulSoup(html_doc, 'html.parser')
 
     # Get title first
-    title = soup.find(id='js-article-text').find('h1').string
+    title = soup.find(id='js-article-text').find('h1').string.encode('utf-8')
 
     # Clean article body first, remove videos, share links etc.
     body = soup.find(itemprop="articleBody").encode('ascii')
@@ -98,5 +98,5 @@ if __name__ == '__main__':
                 file.write('<h1>{0}</h1>\n{1}'.format(title, content))
                 print ('Success : {0}'.format(idx))
 
-        except Exception as e:
-            print ('Error : {0}'.format(idx))
+        except UnicodeEncodeError as e:
+            print ('Error : {0}\n{1}'.format(url, e))
