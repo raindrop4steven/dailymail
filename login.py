@@ -60,7 +60,7 @@ def post_article(form_hash, boundary):
         'dateline': '',
         'summary': 'Researchers found that simply drawing pictures of what you need to remember will help you recall twice as much information, compared to just writing the words out.',
         'newalbum': '请输入相册名称',
-        'content': '<h1>The simple trick that can dramatically boost your memory: Scientists say DRAWING what you want to remember is key</h1>h1> <p class="mol-para-with-font"><font style="font-size:1.2em">Some people use mnemonics or songs to remember things, but experts have another trick.</font>font></p>p><p class="mol-para-with-font"><font style="font-size:1.2em">Researchers found that simply drawing pictures of what you need to remember will help you recall twice as much information, compared to just writing the words out.</font>font></p>p><p class="mol-para-with-font"><font style="font-size:1.2em">Using this technique \'creates a more cohesive memory trace that better integrates visual, motor and semantic information,\' they say.</font>font></p>p><p class="mol-para-with-font"><font style="font-size:1.2em"><span class="mol-style-bold">Scroll down for videos&#160;</span>span></font>font></p>p><div class="mol-img"> <img alt="Researcher found that drawing pictures of what you need to remember will help you recall twice as much information, compared to just writing the words out. Using this technique \'creates a more cohesive memory trace that better integrates visual, motor and semantic information\'" class="blkBorder img-share" height="423" id="i-6215209e49532f3a" src="http://i.dailymail.co.uk/i/pix/2016/04/21/18/336852C500000578-3552371-image-a-3_1461260248754.jpg" width="634"/>',
+        'content': '<h1>The simple trick that can dramatically boost your memory: Scientists say DRAWING what you want to remember is key</h1> <p class="mol-para-with-font"><font style="font-size:1.2em">Some people use mnemonics or songs to remember things, but experts have another trick.</font>font></p><p class="mol-para-with-font"><font style="font-size:1.2em">Researchers found that simply drawing pictures of what you need to remember will help you recall twice as much information, compared to just writing the words out.</font></p><p class="mol-para-with-font"><font style="font-size:1.2em">Using this technique \'creates a more cohesive memory trace that better integrates visual, motor and semantic information,\' they say.</font></p><p class="mol-para-with-font"><font style="font-size:1.2em"><span class="mol-style-bold">Scroll down for videos&#160;</span></font></p><div class="mol-img"> <img alt="Researcher found that drawing pictures of what you need to remember will help you recall twice as much information, compared to just writing the words out. Using this technique \'creates a more cohesive memory trace that better integrates visual, motor and semantic information\'" class="blkBorder img-share" height="423" id="i-6215209e49532f3a" src="http://i.dailymail.co.uk/i/pix/2016/04/21/18/336852C500000578-3552371-image-a-3_1461260248754.jpg" width="634"/>',
         'catid': '7',
         'aid': '',
         'cid': '',
@@ -98,6 +98,8 @@ if  __name__ == '__main__':
     form_hash = get_formhash()
 
     response = post_article(form_hash, boundary)
+
+    print response.status_code
 
     with open('/tmp/final.html', 'w') as outfile:
         outfile.write(response.content)
