@@ -41,7 +41,7 @@ def post_article(form_hash, boundary):
         'Accept-Language': 'zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3',
         'Accept-Encoding': 'gzip, deflate',
         'Referer': 'http://translate.chinadaily.com.cn/portal.php?mod=portalcp&ac=article',
-        'Cookie': 'q8vf_2132_saltkey=KM66kb68; q8vf_2132_lastvisit=1461328499; q8vf_2132_lastact=1461410187%09api.php%09js; pgv_pvi=8652438736; y50Z_2132_sid=FakRS7; y50Z_2132_saltkey=RKJKzlKC; y50Z_2132_lastvisit=1461340300; y50Z_2132_lastact=1461410200%09home.php%09editor; y50Z_2132_ulastactivity=9f2ekvoVjnx2s5s6p8p0bDtv1zWxdbgch64KCJ2VQSaZ%2BeC72EJV; y50Z_2132_auth=0b93paD3LXW4VVHpolwb8l2VW%2Fe9y04IaPq6fBly9dVCSEFTM4vRzbLPbZijpKI2YJZXJavStNk3qChQqKrjWsJDjSZe; y50Z_2132_lastcheckfeed=1603783%7C1461343917; y50Z_2132_security_cookiereport=0365NzBNUUeDt8naTZvx95S1NvOTqRuc7IVFZ4ERG3622dhVa6ru; pgv_info=ssi=s5124791728; tjpctrl=1461412128684',
+        'Cookie': 'q8vf_2132_saltkey=KM66kb68; q8vf_2132_lastvisit=1461328499; q8vf_2132_lastact=1461368884%09api.php%09js; pgv_pvi=8652438736; y50Z_2132_sid=Y0ZqO3; y50Z_2132_saltkey=RKJKzlKC; y50Z_2132_lastvisit=1461340300; y50Z_2132_lastact=1461370676%09home.php%09editor; y50Z_2132_ulastactivity=9ed5RRxYlU46SB6r%2Fx%2BfHJ4utl3rFSX2fmP%2FpVIRaV2KdUbWtBQg; y50Z_2132_auth=0b93paD3LXW4VVHpolwb8l2VW%2Fe9y04IaPq6fBly9dVCSEFTM4vRzbLPbZijpKI2YJZXJavStNk3qChQqKrjWsJDjSZe; y50Z_2132_lastcheckfeed=1603783%7C1461343917; y50Z_2132_security_cookiereport=5669fYPwe%2FOau0wELTn%2BCGZpw7IaPYJu4gRuGyE%2B8V9CZd1QfcGc; pgv_info=ssi=s869159533; y50Z_2132_sendmail=1; y50Z_2132_checkpm=1; tjpctrl=1461372601633',
         'Connection': 'keep-alive',
         'Content-Type': 'multipart/form-data; boundary=%s' % boundary
     }
