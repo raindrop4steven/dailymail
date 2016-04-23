@@ -2,12 +2,11 @@
 # encoding: utf-8
 
 import requests
-import pprint
-
 from bs4 import BeautifulSoup
 
 
 def get_formhash():
+    """ Get formhash from editorForm"""
     # Set request form header info
     request_form_header = {
         'Host': 'translate.chinadaily.com.cn',
@@ -91,7 +90,7 @@ def encode_multipart(params_dict, boundary):
     return '\r\n'.join(data)
 
 
-if  __name__ == '__main__':
+if __name__ == '__main__':
     # Set boundary
     boundary = '---------------------------1660470091365'
 
