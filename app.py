@@ -92,6 +92,11 @@ if __name__ == '__main__':
     # Get article links
     links = get_article_list(response)
 
+    print('[Total]: %d links' % len(links))
+
+    # Totoal unused links
+    unused = 0
+
     # Iterate links
     for idx, url in enumerate(links):
         # filename
@@ -104,18 +109,19 @@ if __name__ == '__main__':
             title, content = get_title_and_content(response)
 
             if len(title) > 120:
-                continue
+                unused += 1
+                with open(fname, 'w') as unused_file:
+                    unused_file.write('<h1>{0}</h1>\n{1}'.format(title, content))
             else:
                 # Post article
                 post_response = add_article(title, title, content)
 
                 if post_response.status_code == 200:
-                    print ('Success : {0}'.format(idx))
+                    print ('[Success]: {0}'.format(idx))
                 else:
-                    print ('Failure : {0}'.format(idx))
+                    print ('[Failure]: {0}'.format(idx))
 
-            # Write it to disk file
-            with open(fname, 'w') as file:
-                file.write('<h1>{0}</h1>\n{1}'.format(title, content))
         except UnicodeEncodeError as e:
-            print ('Error : {0}\n{1}'.format(url, e))
+            print ('[Error]: {0}\n{1}'.format(url, e))
+
+    print('[Finish]: Posted %d articles' % (len(links) - unused))
