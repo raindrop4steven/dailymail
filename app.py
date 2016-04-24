@@ -4,6 +4,7 @@
 import os
 import datetime
 import urllib
+import ConfigParser
 from bs4 import BeautifulSoup
 
 from login import add_article
@@ -74,19 +75,27 @@ def cut_rules(tag):
 
 if __name__ == '__main__':
 
-    # set download folder
-    FOLDER_NAME = 'dailymail'
-    ROOT_FOLDER = os.path.join(os.path.expanduser('~'), FOLDER_NAME)
-    ARTICLE_FOLDER = os.path.join(ROOT_FOLDER, datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+    # Load config first
+    cf = ConfigParser.ConfigParser()
+    cf.read('config.ini')
 
-    if not os.path.exists(ROOT_FOLDER):
-        os.mkdir(ROOT_FOLDER)
+    # Get Debug and index url
+    debug = cf.get('config', 'Debug')
+    index_url = cf.get('config', 'Url')
 
-    if not os.path.exists(ARTICLE_FOLDER):
-        os.mkdir(ARTICLE_FOLDER)
+    if debug == '1':
+        # set download folder
+        FOLDER_NAME = 'dailymail'
+        ROOT_FOLDER = os.path.join(os.path.expanduser('~'), FOLDER_NAME)
+        ARTICLE_FOLDER = os.path.join(ROOT_FOLDER, datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+
+        if not os.path.exists(ROOT_FOLDER):
+            os.mkdir(ROOT_FOLDER)
+
+        if not os.path.exists(ARTICLE_FOLDER):
+            os.mkdir(ARTICLE_FOLDER)
 
     # Index url contains our article links
-    index_url = 'http://www.dailymail.co.uk/ushome/index.html'
     response = get_content_from_url(index_url).read()
 
     # Get article links
@@ -100,7 +109,8 @@ if __name__ == '__main__':
     # Iterate links
     for idx, url in enumerate(links):
         # filename
-        fname = os.path.join(ARTICLE_FOLDER, str(idx) + '.html')
+        if debug == '1':
+            fname = os.path.join(ARTICLE_FOLDER, str(idx) + '.html')
 
         # Get response and parse
         response = get_content_from_url(url).read()
