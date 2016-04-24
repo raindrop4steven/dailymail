@@ -31,7 +31,7 @@ def get_formhash():
     return formhash
 
 
-def post_article(form_hash, boundary, title, summary, content):
+def post_article(form_hash, boundary, fromurl, title, summary, content):
     """ Post article """
     # Construct request_form_header
     post_form_header = {
@@ -51,6 +51,7 @@ def post_article(form_hash, boundary, title, summary, content):
         'title': title,
         'summary': summary,
         'content': content,
+        'fromurl': fromurl,
         'catid': '7',
         'attach_ids': '0',
         'articlesubmit': 'true',
@@ -79,7 +80,7 @@ def encode_multipart(params_dict, boundary):
     return '\r\n'.join(data)
 
 
-def add_article(title, summary, content):
+def add_article(fromurl, title, summary, content):
     # predefined boundary
     boundary = '---------------------------1660470091365'
 
@@ -87,7 +88,7 @@ def add_article(title, summary, content):
     form_hash = get_formhash()
 
     # post our aritlce now
-    response = post_article(form_hash, boundary, title, summary, content)
+    response = post_article(form_hash, boundary, fromurl, title, summary, content)
 
     return response
 

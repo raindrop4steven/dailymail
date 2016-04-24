@@ -94,8 +94,8 @@ if __name__ == '__main__':
 
     print('[Total]: %d links' % len(links))
 
-    # Totoal unused links
-    unused = 0
+    success = 0
+    failure = 0
 
     # Iterate links
     for idx, url in enumerate(links):
@@ -108,20 +108,19 @@ if __name__ == '__main__':
         try:
             title, content = get_title_and_content(response)
 
-            if len(title) > 120:
-                unused += 1
-                with open(fname, 'w') as unused_file:
-                    unused_file.write('<h1>{0}</h1>\n{1}'.format(title, content))
+            fromurl = url.encode('utf-8')
+
+            # Post article
+            post_response = add_article(fromurl=fromurl, title=title, summary=title, content=content)
+
+            if post_response.status_code == 200:
+                success += 1
+                print ('[Success]: {0}'.format(idx))
             else:
-                # Post article
-                post_response = add_article(title, title, content)
+                failure += 1
+                print ('[Failure]: {0}'.format(idx))
 
-                if post_response.status_code == 200:
-                    print ('[Success]: {0}'.format(idx))
-                else:
-                    print ('[Failure]: {0}'.format(idx))
-
-        except UnicodeEncodeError as e:
+        except Exception as e:
             print ('[Error]: {0}\n{1}'.format(url, e))
 
-    print('[Finish]: Posted %d articles' % (len(links) - unused))
+    print('[Finish]: Posted %d articles, failure %d' % (success, failure))
