@@ -31,7 +31,7 @@ def get_formhash():
     return formhash
 
 
-def post_article(form_hash, boundary):
+def post_article(form_hash, boundary, title, summary, content):
     """ Post article """
     # Construct request_form_header
     post_form_header = {
@@ -48,9 +48,9 @@ def post_article(form_hash, boundary):
 
     # Post data
     post_data = {
-        'title': 'The simple trick that can dramatically boost your memory: Scientists say DRAWING what you want to remember is key',
-        'summary': 'Researchers found that simply drawing pictures of what you need to remember will help you recall twice as much information, compared to just writing the words out.',
-        'content': '<h1>The simple trick that can dramatically boost your memory: Scientists say DRAWING what you want to remember is key</h1> <p class="mol-para-with-font"><font style="font-size:1.2em">Some people use mnemonics or songs to remember things, but experts have another trick.</font>font></p><p class="mol-para-with-font"><font style="font-size:1.2em">Researchers found that simply drawing pictures of what you need to remember will help you recall twice as much information, compared to just writing the words out.</font></p><p class="mol-para-with-font"><font style="font-size:1.2em">Using this technique \'creates a more cohesive memory trace that better integrates visual, motor and semantic information,\' they say.</font></p><p class="mol-para-with-font"><font style="font-size:1.2em"><span class="mol-style-bold">Scroll down for videos&#160;</span></font></p><div class="mol-img"> <img alt="Researcher found that drawing pictures of what you need to remember will help you recall twice as much information, compared to just writing the words out. Using this technique \'creates a more cohesive memory trace that better integrates visual, motor and semantic information\'" class="blkBorder img-share" height="423" id="i-6215209e49532f3a" src="http://i.dailymail.co.uk/i/pix/2016/04/21/18/336852C500000578-3552371-image-a-3_1461260248754.jpg" width="634"/>',
+        'title': title,
+        'summary': summary,
+        'content': content,
         'catid': '7',
         'attach_ids': '0',
         'articlesubmit': 'true',
@@ -77,6 +77,19 @@ def encode_multipart(params_dict, boundary):
 
     data.append('--%s--\r\n' % boundary)
     return '\r\n'.join(data)
+
+
+def add_article(title, summary, content):
+    # predefined boundary
+    boundary = '---------------------------1660470091365'
+
+    # Get form hash first
+    form_hash = get_formhash()
+
+    # post our aritlce now
+    response = post_article(form_hash, boundary, title, summary, content)
+
+    return response
 
 
 if __name__ == '__main__':

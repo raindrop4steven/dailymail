@@ -6,6 +6,8 @@ import datetime
 import urllib
 from bs4 import BeautifulSoup
 
+from login import add_article
+
 
 def get_content_from_url(url):
     """ Get content from specified url"""
@@ -97,12 +99,23 @@ if __name__ == '__main__':
 
         # Get response and parse
         response = get_content_from_url(url).read()
+
         try:
             title, content = get_title_and_content(response)
 
+            if len(title) > 120:
+                continue
+            else:
+                # Post article
+                post_response = add_article(title, title, content)
+
+                if post_response.status_code == 200:
+                    print ('Success : {0}'.format(idx))
+                else:
+                    print ('Failure : {0}'.format(idx))
+
+            # Write it to disk file
             with open(fname, 'w') as file:
                 file.write('<h1>{0}</h1>\n{1}'.format(title, content))
-                print ('Success : {0}'.format(idx))
-
         except UnicodeEncodeError as e:
             print ('Error : {0}\n{1}'.format(url, e))
