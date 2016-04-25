@@ -1,0 +1,5 @@
+                // dailymail //
+
+        ~ Build EXE
+	zxfreeze to build python script into exe.
+	python setup.py build.
