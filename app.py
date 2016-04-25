@@ -79,9 +79,10 @@ if __name__ == '__main__':
     cf = ConfigParser.ConfigParser()
     cf.read('config.ini')
 
-    # Get Debug and index url
+    # Get Debug and index url and limits
     debug = cf.get('config', 'Debug')
     index_url = cf.get('config', 'Url')
+    limits = cf.get('config', 'Limits')
 
     if debug == '1':
         # set download folder
@@ -101,7 +102,16 @@ if __name__ == '__main__':
     # Get article links
     links = get_article_list(response)
 
-    print('[Total]: %d links' % len(links))
+    links_count = len(links)
+
+    try:
+        limit_count =  min(int(limits), links_count)
+    except ValueError as e:
+        print('[Error]: Limits field in config.ini, use total links count %d instead', links_count)
+	limit_count = links_count
+
+    print('[Total]: %d links' % links_count)
+    print('[Goal]: %d links' % limit_count)
 
     success = 0
     failure = 0
@@ -111,6 +121,10 @@ if __name__ == '__main__':
         # filename
         if debug == '1':
             fname = os.path.join(ARTICLE_FOLDER, str(idx) + '.html')
+
+	# End to scraw if success is equal to limits
+	if success > limit_count:
+	    break
 
         # Get response and parse
         response = get_content_from_url(url).read()
