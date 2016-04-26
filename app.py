@@ -160,6 +160,7 @@ if __name__ == '__main__':
         # filename
         if debug == '1':
             fname = os.path.join(ARTICLE_FOLDER, str(idx) + '.html')
+            debugname = os.path.join(ARTICLE_FOLDER, str(idx) + '-debug.html')
 
         # End to scraw if success is equal to limits
         if success >= limit_count:
@@ -177,12 +178,20 @@ if __name__ == '__main__':
             # Post article
             post_response = add_article(fromurl=fromurl, title=title, summary=title, content=content)
 
-            if post_response.status_code == 200:
+            post_soup = BeautifulSoup(post_response.content, 'html.parser')
+            alert_right = post_soup.select('.alert_right')
+
+            if alert_right is not None:
                 success += 1
                 print ('[Success]: {0}'.format(idx))
             else:
                 failure += 1
                 print ('[Failure]: {0}'.format(idx))
+
+            # Debug result file
+            if debug == '1':
+                with open(debugname, 'w') as outfile:
+                    outfile.write(post_response.content)
 
         except Exception as e:
             print ('[Error]: {0}\n{1}'.format(url, e))
