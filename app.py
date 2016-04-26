@@ -5,6 +5,7 @@ import os
 import operator
 import datetime
 import urllib
+import random
 import ConfigParser
 from bs4 import BeautifulSoup
 
@@ -123,6 +124,18 @@ if __name__ == '__main__':
     index_url = cf.get('config', 'Url')
     limits = cf.get('config', 'Limits')
 
+    # Get min and max time
+    min = cf.get('time', 'Min')
+    max = cf.get('time', 'Max')
+
+    try:
+        min_time = int(min)
+        max_time = int(max)
+    except ValueError:
+	min_time = 2
+	max_time = 5
+        print('Please check config.ini for time range, use default value')
+
     if debug == '1':
         # set download folder
         FOLDER_NAME = 'dailymail'
@@ -184,6 +197,11 @@ if __name__ == '__main__':
             if alert_right is not None:
                 success += 1
                 print ('[Success]: {0}'.format(idx))
+
+		# sleep random time
+		sleep_time = random.randint(min_time, max_time)
+		print('sleep %d seconds, keep secure' % sleep_time)
+		sleep(sleep_time)
             else:
                 failure += 1
                 print ('[Failure]: {0}'.format(idx))
