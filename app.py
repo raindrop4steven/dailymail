@@ -23,8 +23,8 @@ def get_content_from_url(url):
 def get_article_scores(html_doc):
     """ Get article links with scores """
     DOMAIN_NAME = 'http://www.dailymail.co.uk'
-
     link_dict = {}
+    blacklist = get_black_list()
 
     soup = BeautifulSoup(html_doc, 'html.parser')
 
@@ -45,9 +45,12 @@ def get_article_scores(html_doc):
         try:
             link = share.find_parent("div", class_="article-icon-links-container").find_previous_sibling('h2').contents[1]['href']
 
-            link = DOMAIN_NAME + link.strip()
+            # Check link validation and black list
+            if link is not None and len(link) > 0:
+                if not any(x in link for x in blacklist):
+                    link = DOMAIN_NAME + link.strip()
+                    link_dict[link] = value
 
-            link_dict[link] = value
         except Exception:
             pass
 
@@ -92,6 +95,21 @@ def cut_rules(tag):
         result = True
 
     return result
+
+
+def get_black_list():
+    """ Get black list"""
+    blacklist = []
+    cf = ConfigParser.ConfigParser()
+    cf.read('config.ini')
+
+    # Get Debug and index url and limits
+    black = cf.get('config', 'Blacklist')
+
+    if black is not None and len(black) != 0:
+        blacklist = black.split(';')
+
+    return blacklist
 
 
 if __name__ == '__main__':
