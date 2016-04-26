@@ -2,6 +2,7 @@
 # encoding: utf-8
 
 import os
+import operator
 import datetime
 import urllib
 import ConfigParser
@@ -19,21 +20,41 @@ def get_content_from_url(url):
     return response
 
 
-def get_article_list(html_doc):
-    """ Get article list from index.html"""
+def get_article_scores(html_doc):
+    """ Get article links with scores """
     DOMAIN_NAME = 'http://www.dailymail.co.uk'
 
-    urls = []
+    link_dict = {}
 
     soup = BeautifulSoup(html_doc, 'html.parser')
-    links = soup.select('.linkro-darkred > a')
 
-    for url in links:
-        if url.has_attr('href'):
-            href = DOMAIN_NAME + url['href']
-            urls.append(href)
+    # Get share count first
+    shares = soup.select('.gr3ox > a > .linktext > .bold')
 
-    return urls
+    for share in shares:
+        # Get share count first
+        str_share = share.string
+        if str_share == '' or str_share is None:
+            value = 0
+        elif str_share.endswith('k'):
+            value = int(float(share.text[:-1]) * 1000)
+        else:
+            value = int(share.text)
+
+        # Get related link
+        try:
+            link = share.find_parent("div", class_="article-icon-links-container").find_previous_sibling('h2').contents[1]['href']
+
+            link = DOMAIN_NAME + link.strip()
+
+            link_dict[link] = value
+        except Exception:
+            pass
+
+    # Sort our links by share number
+    order_links = sorted(link_dict.items(), key=operator.itemgetter(1), reverse=True)
+
+    return order_links
 
 
 def get_title_and_content(html_doc):
@@ -41,7 +62,7 @@ def get_title_and_content(html_doc):
     soup = BeautifulSoup(html_doc, 'html.parser')
 
     # Get title first
-    title = soup.find(id='js-article-text').find('h1').string.encode('utf-8')
+    title = soup.find(id='js-article-text').find('h1').string.strip().encode('utf-8')
 
     # Clean article body first, remove videos, share links etc.
     body = soup.find(itemprop="articleBody").encode('ascii')
@@ -99,16 +120,16 @@ if __name__ == '__main__':
     # Index url contains our article links
     response = get_content_from_url(index_url).read()
 
-    # Get article links
-    links = get_article_list(response)
+    # Get article ordered links
+    order_links = get_article_scores(response)
 
-    links_count = len(links)
+    links_count = len(order_links)
 
     try:
-        limit_count =  min(int(limits), links_count)
+        limit_count = min(int(limits), links_count)
     except ValueError as e:
         print('[Error]: Limits field in config.ini, use total links count %d instead', links_count)
-	limit_count = links_count
+        limit_count = links_count
 
     print('[Total]: %d links' % links_count)
     print('[Goal]: %d links' % limit_count)
@@ -117,16 +138,17 @@ if __name__ == '__main__':
     failure = 0
 
     # Iterate links
-    for idx, url in enumerate(links):
+    for idx, link in enumerate(order_links):
         # filename
         if debug == '1':
             fname = os.path.join(ARTICLE_FOLDER, str(idx) + '.html')
 
-	# End to scraw if success is equal to limits
-	if success > limit_count:
-	    break
+        # End to scraw if success is equal to limits
+        if success >= limit_count:
+            break
 
         # Get response and parse
+        url = link[0]
         response = get_content_from_url(url).read()
 
         try:
