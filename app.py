@@ -195,7 +195,7 @@ if __name__ == '__main__':
             post_soup = BeautifulSoup(post_response.content, 'html.parser')
             alert_right = post_soup.select('.alert_right')
 
-            if alert_right is not None:
+            if len(alert_right) > 0:
                 success += 1
                 print ('[Success]: {0}'.format(idx))
 
