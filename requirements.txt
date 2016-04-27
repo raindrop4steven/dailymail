@@ -4,3 +4,5 @@ beautifulsoup4==4.4.1
 chardet==2.3.0
 requests==2.9.1
 wsgiref==0.1.2
+cx-Freeze==4.3.4
+pypiwin32==219
