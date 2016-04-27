@@ -8,6 +8,7 @@ import datetime
 import urllib
 import random
 import ConfigParser
+from collections import OrderedDict
 from bs4 import BeautifulSoup
 
 from login import add_article
@@ -22,10 +23,10 @@ def get_content_from_url(url):
     return response
 
 
-def get_article_scores(html_doc):
+def get_article_scores(html_doc, ordered=True):
     """ Get article links with scores """
     DOMAIN_NAME = 'http://www.dailymail.co.uk'
-    link_dict = {}
+    link_dict = OrderedDict()
     blacklist = get_black_list()
 
     soup = BeautifulSoup(html_doc, 'html.parser')
@@ -57,7 +58,12 @@ def get_article_scores(html_doc):
             pass
 
     # Sort our links by share number
-    order_links = sorted(link_dict.items(), key=operator.itemgetter(1), reverse=True)
+    if ordered:
+        order_links = sorted(link_dict.items(), key=operator.itemgetter(1), reverse=True)
+        print('[Mode]: share order')
+    else:
+        order_links = link_dict.items()
+        print('[Mode]: origin order')
 
     return order_links
 
@@ -124,6 +130,9 @@ if __name__ == '__main__':
     debug = cf.get('config', 'Debug')
     index_url = cf.get('config', 'Url')
     limits = cf.get('config', 'Limits')
+    config_ordered = cf.get('config', 'Ordered')
+
+    print(config_ordered)
 
     # Get min and max time
     min_str = cf.get('time', 'Min')
@@ -153,7 +162,8 @@ if __name__ == '__main__':
     response = get_content_from_url(index_url).read()
 
     # Get article ordered links
-    order_links = get_article_scores(response)
+    ordered = True if config_ordered == 'true' else False
+    order_links = get_article_scores(response, ordered)
 
     links_count = len(order_links)
 
@@ -186,6 +196,10 @@ if __name__ == '__main__':
 
         try:
             title, content = get_title_and_content(response)
+
+            if debug == '1':
+                with open(fname, 'w') as outfile:
+                    outfile.write('<h1>{0}</h1>\n{1}'.format(title, content))
 
             fromurl = url.encode('utf-8')
 
