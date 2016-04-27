@@ -12,6 +12,7 @@ from collections import OrderedDict
 from bs4 import BeautifulSoup
 
 from login import add_article
+from DSql import DSql
 
 
 def get_content_from_url(url):
@@ -132,8 +133,6 @@ if __name__ == '__main__':
     limits = cf.get('config', 'Limits')
     config_ordered = cf.get('config', 'Ordered')
 
-    print(config_ordered)
-
     # Get min and max time
     min_str = cf.get('time', 'Min')
     max_str = cf.get('time', 'Max')
@@ -145,6 +144,9 @@ if __name__ == '__main__':
         min_time = 2
         max_time = 5
         print('Please check config.ini for time range, use default value')
+
+    # Create db
+    sql_handler = DSql()
 
     if debug == '1':
         # set download folder
@@ -203,28 +205,33 @@ if __name__ == '__main__':
 
             fromurl = url.encode('utf-8')
 
-            # Post article
-            post_response = add_article(fromurl=fromurl, title=title, summary=title, content=content)
+            # Only post article when no in local db
+            can_insert = sql_handler.query_article(link=url)
 
-            post_soup = BeautifulSoup(post_response.content, 'html.parser')
-            alert_right = post_soup.select('.alert_right')
+            if can_insert:
+                post_response = add_article(fromurl=fromurl, title=title, summary=title, content=content)
 
-            if len(alert_right) > 0:
-                success += 1
-                print ('[Success]: {0}'.format(idx))
+                post_soup = BeautifulSoup(post_response.content, 'html.parser')
+                alert_right = post_soup.select('.alert_right')
 
-                # sleep random time
-                sleep_time = random.randint(min_time, max_time)
-                print('sleep %d minutes, keep secure' % sleep_time)
-                time.sleep(sleep_time * 60)
-            else:
-                failure += 1
-                print ('[Failure]: {0}'.format(idx))
+                if len(alert_right) > 0:
+                    success += 1
+                    # insert into sqldatabase
+                    sql_handler.insert_article(url)
+                    print ('[Success]: {0}'.format(idx))
 
-            # Debug result file
-            if debug == '1':
-                with open(debugname, 'w') as outfile:
-                    outfile.write(post_response.content)
+                    # sleep random time
+                    sleep_time = random.randint(min_time, max_time)
+                    print('sleep %d minutes, keep secure' % sleep_time)
+                    time.sleep(sleep_time * 60)
+                else:
+                    failure += 1
+                    print ('[Failure]: {0}'.format(idx))
+
+                # Debug result file
+                if debug == '1':
+                    with open(debugname, 'w') as outfile:
+                        outfile.write(post_response.content)
 
         except Exception as e:
             print ('[Error]: {0}\n{1}'.format(url, e))

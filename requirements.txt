@@ -1,4 +1,6 @@
+SQLAlchemy==1.0.12
+argparse==1.2.1
 beautifulsoup4==4.4.1
-cx-Freeze==4.3.4
-pypiwin32==219
+chardet==2.3.0
 requests==2.9.1
+wsgiref==0.1.2
